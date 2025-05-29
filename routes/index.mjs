@@ -1,14 +1,14 @@
 import express from "express";
-import { join, dirname } from 'path';
-import { fileURLToPath } from 'url';
-import { Low } from 'lowdb';
-import { JSONFile } from 'lowdb/node';
+import { join, dirname } from "path";
+import { fileURLToPath } from "url";
+import { Low } from "lowdb";
+import { JSONFile } from "lowdb/node";
 
 const router = express.Router();
 
 // Configure lowdb to use JSON file
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const file = join(__dirname, '..', 'db.json');
+const file = "db.json";
 const adapter = new JSONFile(file);
 
 // Initialize with default data structure
@@ -20,7 +20,7 @@ await db.read();
 
 router.get("/deces/certificate/:hash", (req, res) => {
   const hash = req.params.hash;
-  const person = db.data.personnes.find(p => p.hash === hash);
+  const person = db.data.personnes.find((p) => p.hash === hash);
 
   if (!person) {
     return res.status(404).json({ error: "Not found" });
@@ -39,7 +39,7 @@ router.get("/deces/certificate/:hash", (req, res) => {
 
 router.get("/deces/tls-proof/:hash", (req, res) => {
   const hash = req.params.hash;
-  const person = db.data.personnes.find(p => p.hash === hash);
+  const person = db.data.personnes.find((p) => p.hash === hash);
 
   if (!person) {
     return res.status(404).json({ error: "Not found" });
@@ -54,6 +54,10 @@ router.get("/deces/tls-proof/:hash", (req, res) => {
       is_test_data: true,
     },
   });
+});
+
+router.use((req, res) => {
+  res.status(404).json({ error: "Route not found", path: req.path });
 });
 
 export default router;
